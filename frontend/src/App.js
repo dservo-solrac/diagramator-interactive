@@ -1,52 +1,120 @@
 
-import React, { useState } from 'react';
-import { translate } from './services/mermaidToMxGraph';
+import React, { useState, useEffect } from 'react';
+import LoginPage from './pages/LoginPage';
+import Sidebar from './components/Sidebar';
+import TopBar from './components/TopBar';
+import MermaidModal from './components/MermaidModal';
 import MxGraphCanvas from './components/MxGraphCanvas';
+import { translate } from './services/mermaidToMxGraph';
+import * as api from './services/api';
 
-const sampleMermaid = `
-graph TD
-    A[Christmas] -->|Get money| B(Go shopping)
-    B --> C{Let me think}
-    C -->|One| D[Laptop]
-    C -->|Two| E[iPhone]
-    C -->|Three| F[fa:fa-car Car]
-`;
-
-function App() {
-    const [mermaidCode, setMermaidCode] = useState(sampleMermaid);
+const App = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+    const [diagrams, setDiagrams] = useState([]);
+    const [currentDiagram, setCurrentDiagram] = useState(null);
+    const [mermaidCode, setMermaidCode] = useState('');
     const [xml, setXml] = useState('');
-    const [error, setError] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchDiagrams();
+        }
+    }, [isAuthenticated]);
+
+    const fetchDiagrams = async () => {
+        const data = await api.getDiagrams();
+        setDiagrams(data);
+    };
+
+    const handleLoginSuccess = () => {
+        setIsAuthenticated(true);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+    };
+
+    const handleNewDiagram = () => {
+        setCurrentDiagram(null);
+        setMermaidCode('graph TD\n  A --> B');
+        setXml('');
+    };
+
+    const handleLoadDiagram = (diagram) => {
+        setCurrentDiagram(diagram);
+        setMermaidCode(diagram.mermaid_script || '');
+        setXml(diagram.xml_script || '');
+    };
+
+    const handleDeleteDiagram = async (id) => {
+        await api.deleteDiagram(id);
+        fetchDiagrams();
+    };
+
+    const handleSaveDiagram = async () => {
+        if (!currentDiagram?.name) {
+            alert('Please enter a diagram name.');
+            return;
+        }
+        const payload = { 
+            name: currentDiagram.name, 
+            mermaid_script: mermaidCode, 
+            xml_script: xml 
+        };
+        if (currentDiagram.id) {
+            await api.updateDiagram(currentDiagram.id, payload);
+        } else {
+            await api.createDiagram(payload);
+        }
+        fetchDiagrams();
+    };
 
     const handleGenerate = async () => {
         try {
-            setError('');
             const generatedXml = await translate(mermaidCode);
             setXml(generatedXml);
+            setIsModalOpen(false);
         } catch (e) {
-            console.error(e);
-            setError('Failed to parse Mermaid code. Please check the syntax.');
-            setXml('');
+            alert('Failed to parse Mermaid code.');
         }
     };
 
+    if (!isAuthenticated) {
+        return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+    }
+
     return (
-        <div style={{ display: 'flex', height: '100vh' }}>
-            <div style={{ width: '30%', padding: '10px', display: 'flex', flexDirection: 'column' }}>
-                <h2>Mermaid Code</h2>
-                <textarea
-                    value={mermaidCode}
-                    onChange={(e) => setMermaidCode(e.target.value)}
-                    style={{ flex: 1, width: '100%', fontFamily: 'monospace' }}
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+            <TopBar 
+                diagramName={currentDiagram?.name || ''}
+                setDiagramName={(name) => setCurrentDiagram(prev => ({ ...prev, name }))}
+                onSave={handleSaveDiagram}
+                onMermaidOpen={() => setIsModalOpen(true)}
+                onLogout={handleLogout}
+            />
+            <div style={{ display: 'flex', flex: 1 }}>
+                <Sidebar 
+                    diagrams={diagrams}
+                    onNew={handleNewDiagram}
+                    onLoad={handleLoadDiagram}
+                    onDelete={handleDeleteDiagram}
                 />
-                <button onClick={handleGenerate} style={{ marginTop: '10px' }}>Generate</button>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                <div style={{ flex: 1, padding: '10px' }}>
+                    <MxGraphCanvas xml={xml} />
+                </div>
             </div>
-            <div style={{ width: '70%', padding: '10px' }}>
-                <h2>Interactive Diagram</h2>
-                <MxGraphCanvas xml={xml} />
-            </div>
+            {isModalOpen && (
+                <MermaidModal 
+                    code={mermaidCode}
+                    setCode={setMermaidCode}
+                    onGenerate={handleGenerate}
+                    onCancel={() => setIsModalOpen(false)}
+                />
+            )}
         </div>
     );
-}
+};
 
 export default App;
