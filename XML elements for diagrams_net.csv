@@ -1,0 +1,9 @@
+Elemento,Descripción,Atributos Comunes
+<mxfile>,Es el elemento raíz del documento. Contiene información general sobre el archivo.,"host, modified, agent, version, type."
+<diagram>,Contenedor para un único diagrama o página dentro del archivo. Un archivo .drawio puede tener múltiples etiquetas <diagram>.,"id, name."
+<mxGraphModel>,"Es el corazón del diagrama. Define el modelo de datos del gráfico, incluyendo la configuración de la página y la cuadrícula.","dx, dy, grid, gridSize, pageWidth, pageHeight."
+<root>,"Contiene todos los elementos del gráfico. Siempre incluye dos celdas iniciales: una con id=""0"" (la capa por defecto) y otra con id=""1"" (la celda padre de la capa por defecto).",-
+<mxCell>,"El elemento más importante. Representa un objeto en el lienzo. Puede ser una forma (vértice), un conector (arista) o un grupo.","id, value (texto o etiqueta), style (apariencia), parent, source (ID de origen), target (ID de destino), vertex (1 si es forma), edge (1 si es conector)."
+<mxGeometry>,Define la posición y el tamaño de un elemento. Es un hijo de <mxCell>.,"x, y (coordenadas), width, height, as (""geometry"")."
+<mxPoint>,"Define una coordenada específica, a menudo utilizada para los puntos de un conector. Es un hijo de <mxGeometry>.","x, y, as (""sourcePoint"" o ""targetPoint"")."
+<Array>,"Usado dentro de <mxGeometry> para contener una lista de <mxPoint>, que definen la ruta de un conector complejo.","as (""points"")."
