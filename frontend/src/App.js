@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import LoginPage from './pages/LoginPage';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
@@ -7,6 +6,7 @@ import MermaidModal from './components/MermaidModal';
 import MxGraphCanvas from './components/MxGraphCanvas';
 import { translate } from './services/mermaidToMxGraph';
 import * as api from './services/api';
+import './App.css';
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
@@ -15,12 +15,17 @@ const App = () => {
     const [mermaidCode, setMermaidCode] = useState('');
     const [xml, setXml] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [theme, setTheme] = useState('light');
 
     useEffect(() => {
         if (isAuthenticated) {
             fetchDiagrams();
         }
     }, [isAuthenticated]);
+
+    useEffect(() => {
+        document.body.className = `theme-${theme}`;
+    }, [theme]);
 
     const fetchDiagrams = async () => {
         const data = await api.getDiagrams();
@@ -37,7 +42,7 @@ const App = () => {
     };
 
     const handleNewDiagram = () => {
-        setCurrentDiagram(null);
+        setCurrentDiagram({ name: 'New Diagram' });
         setMermaidCode('graph TD\n  A --> B');
         setXml('');
     };
@@ -66,7 +71,8 @@ const App = () => {
         if (currentDiagram.id) {
             await api.updateDiagram(currentDiagram.id, payload);
         } else {
-            await api.createDiagram(payload);
+            const newDiagram = await api.createDiagram(payload);
+            setCurrentDiagram(newDiagram);
         }
         fetchDiagrams();
     };
@@ -77,8 +83,18 @@ const App = () => {
             setXml(generatedXml);
             setIsModalOpen(false);
         } catch (e) {
+            console.error(e);
             alert('Failed to parse Mermaid code.');
         }
+    };
+
+    const handleExport = (format) => {
+        // This is a placeholder. Export functionality requires access to the graph instance.
+        alert(`Exporting as ${format} is not fully implemented yet.`);
+    };
+    
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light');
     };
 
     if (!isAuthenticated) {
@@ -91,17 +107,21 @@ const App = () => {
                 diagramName={currentDiagram?.name || ''}
                 setDiagramName={(name) => setCurrentDiagram(prev => ({ ...prev, name }))}
                 onSave={handleSaveDiagram}
+                onExport={handleExport}
                 onMermaidOpen={() => setIsModalOpen(true)}
                 onLogout={handleLogout}
             />
-            <div style={{ display: 'flex', flex: 1 }}>
+            <div style={{ display: 'flex', flex: 1, height: 'calc(100vh - 50px)' }}>
                 <Sidebar 
                     diagrams={diagrams}
                     onNew={handleNewDiagram}
                     onLoad={handleLoadDiagram}
                     onDelete={handleDeleteDiagram}
                 />
-                <div style={{ flex: 1, padding: '10px' }}>
+                <div style={{ flex: 1, padding: '10px', position: 'relative' }}>
+                    <button onClick={toggleTheme} style={{position: 'absolute', top: 20, left: 20, zIndex: 10}}>
+                        Toggle Theme
+                    </button>
                     <MxGraphCanvas xml={xml} />
                 </div>
             </div>

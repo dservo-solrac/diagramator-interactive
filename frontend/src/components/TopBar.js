@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TopBar = ({ diagramName, setDiagramName, onSave, onMermaidOpen, onLogout }) => (
+const TopBar = ({ diagramName, setDiagramName, onSave, onExport, onMermaidOpen, onLogout }) => (
     <div style={{ padding: '10px', borderBottom: '1px solid #ccc', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
             <input 
