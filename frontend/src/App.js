@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
 import MermaidModal from './components/MermaidModal';
@@ -10,6 +11,7 @@ import './App.css';
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+    const [showSignUp, setShowSignUp] = useState(false);
     const [diagrams, setDiagrams] = useState([]);
     const [currentDiagram, setCurrentDiagram] = useState(null);
     const [mermaidCode, setMermaidCode] = useState('');
@@ -91,18 +93,24 @@ const App = () => {
     const handleExport = (format) => {
         // This is a placeholder. Export functionality requires access to the graph instance.
         alert(`Exporting as ${format} is not fully implemented yet.`);
-    };
-    
+    }; 
+
     const toggleTheme = () => {
         setTheme(prev => prev === 'light' ? 'dark' : 'light');
     };
 
     if (!isAuthenticated) {
-        return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+        if (showSignUp) {
+            return <SignUpPage onSignUpSuccess={() => {
+                setShowSignUp(false);
+                alert('Sign up successful! Please log in.');
+            }} onSwitchToLogin={() => setShowSignUp(false)} />;
+        }
+        return <LoginPage onLoginSuccess={handleLoginSuccess} onSwitchToSignUp={() => setShowSignUp(true)} />;
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <div className="app-container">
             <TopBar 
                 diagramName={currentDiagram?.name || ''}
                 setDiagramName={(name) => setCurrentDiagram(prev => ({ ...prev, name }))}
@@ -111,14 +119,14 @@ const App = () => {
                 onMermaidOpen={() => setIsModalOpen(true)}
                 onLogout={handleLogout}
             />
-            <div style={{ display: 'flex', flex: 1, height: 'calc(100vh - 50px)' }}>
+            <div className="main-content">
                 <Sidebar 
                     diagrams={diagrams}
                     onNew={handleNewDiagram}
                     onLoad={handleLoadDiagram}
                     onDelete={handleDeleteDiagram}
                 />
-                <div style={{ flex: 1, padding: '10px', position: 'relative' }}>
+                <div className="canvas-container">
                     <button onClick={toggleTheme} style={{position: 'absolute', top: 20, left: 20, zIndex: 10}}>
                         Toggle Theme
                     </button>

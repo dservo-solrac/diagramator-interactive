@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { login } from '../services/api';
+import { signup } from '../services/api';
 
-const LoginPage = ({ onLoginSuccess, onSwitchToSignUp }) => {
-    const [email, setEmail] = useState('admin@example.com');
-    const [password, setPassword] = useState('admin');
+const SignUpPage = ({ onSignUpSuccess, onSwitchToLogin }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         try {
-            await login(email, password);
-            onLoginSuccess();
+            await signup(email, password);
+            onSignUpSuccess();
         } catch (err) {
             setError(err.message);
         }
@@ -21,7 +21,7 @@ const LoginPage = ({ onLoginSuccess, onSwitchToSignUp }) => {
         <div className="login-page">
             <div className="login-container">
                 <form onSubmit={handleSubmit}>
-                    <h2>Login</h2>
+                    <h2>Sign Up</h2>
                     <input
                         type="email"
                         placeholder="Email"
@@ -36,13 +36,13 @@ const LoginPage = ({ onLoginSuccess, onSwitchToSignUp }) => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-                    <button type="submit">Login</button>
+                    <button type="submit">Sign Up</button>
                     {error && <p className="error">{error}</p>}
                 </form>
-            <p>Don't have an account? <button onClick={onSwitchToSignUp}>Sign Up</button></p>
+            <p>Already have an account? <button onClick={onSwitchToLogin}>Login</button></p>
             </div>
         </div>
     );
 };
 
-export default LoginPage;
+export default SignUpPage;

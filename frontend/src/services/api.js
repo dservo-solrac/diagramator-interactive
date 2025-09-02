@@ -26,21 +26,30 @@ export const login = async (email, password) => {
     formData.append('username', email);
     formData.append('password', password);
 
-    const response = await fetch(`/token`, {
+    const response = await fetch(`${API_URL}/token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: formData,
     });
 
     if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail);
+        try {
+            const error = await response.json();
+            throw new Error(error.detail);
+        } catch (e) {
+            throw new Error('An unexpected error occurred.');
+        }
     }
 
     const data = await response.json();
     localStorage.setItem('token', data.access_token);
     return data;
 };
+
+export const signup = (email, password) => request('/users/', {
+    method: 'POST',
+    body: JSON.stringify({ email, password }),
+});
 
 export const getCurrentUser = () => request('/users/me');
 export const getDiagrams = () => request('/diagrams/');

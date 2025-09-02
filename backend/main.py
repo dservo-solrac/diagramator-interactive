@@ -2,10 +2,10 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import List
-from jose import JWTError
+from jose import jwt, JWTError
 
-from . import crud, models, schemas, security
-from .database import SessionLocal, engine
+import crud, models, schemas, security
+from database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -23,9 +23,9 @@ def get_db():
 @app.on_event("startup")
 def startup_event():
     db = SessionLocal()
-    admin_user = crud.get_user_by_email(db, email="admin")
+    admin_user = crud.get_user_by_email(db, email="admin@example.com")
     if not admin_user:
-        crud.create_user(db, user=schemas.UserCreate(email="admin", password="admin"))
+        crud.create_user(db, user=schemas.UserCreate(email="admin@example.com", password="admin"))
     db.close()
 
 

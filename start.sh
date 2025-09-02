@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo "Stopping and removing existing containers and volumes..."
+docker-compose down --volumes
+
 echo "Starting Diagramator services..."
 
 # Build and start the containers in detached mode
