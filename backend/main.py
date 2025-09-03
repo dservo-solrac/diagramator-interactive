@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import List
@@ -10,6 +10,7 @@ from database import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+router = APIRouter()
 
 # Dependency to get DB session
 def get_db():
@@ -50,7 +51,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
-@app.post("/token", response_model=schemas.Token)
+@router.post("/token", response_model=schemas.Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.get_user_by_email(db, email=form_data.username)
     if not user or not security.verify_password(form_data.password, user.hashed_password):
@@ -62,39 +63,41 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = security.create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.post("/users/", response_model=schemas.User)
+@router.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_user(db=db, user=user)
 
-@app.get("/users/me", response_model=schemas.User)
+@router.get("/users/me", response_model=schemas.User)
 async def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
 
-@app.get("/diagrams/", response_model=List[schemas.Diagram])
+@router.get("/diagrams/", response_model=List[schemas.Diagram])
 def read_diagrams(skip: int = 0, limit: int = 100, current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     diagrams = crud.get_diagrams_by_owner(db, owner_id=current_user.id, skip=skip, limit=limit)
     return diagrams
 
-@app.post("/diagrams/", response_model=schemas.Diagram)
+@router.post("/diagrams/", response_model=schemas.Diagram)
 def create_diagram(diagram: schemas.DiagramCreate, current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     db_diagram = crud.get_diagram_by_name(db, owner_id=current_user.id, name=diagram.name)
     if db_diagram:
         raise HTTPException(status_code=400, detail="Diagram name already exists")
     return crud.create_diagram(db=db, diagram=diagram, owner_id=current_user.id)
 
-@app.put("/diagrams/{diagram_id}", response_model=schemas.Diagram)
+@router.put("/diagrams/{diagram_id}", response_model=schemas.Diagram)
 def update_diagram(diagram_id: int, diagram_update: schemas.DiagramUpdate, current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     db_diagram = db.query(models.Diagram).filter(models.Diagram.id == diagram_id, models.Diagram.owner_id == current_user.id).first()
     if not db_diagram:
         raise HTTPException(status_code=404, detail="Diagram not found")
     return crud.update_diagram(db=db, db_diagram=db_diagram, diagram_update=diagram_update)
 
-@app.delete("/diagrams/{diagram_id}", response_model=schemas.Diagram)
+@router.delete("/diagrams/{diagram_id}", response_model=schemas.Diagram)
 def delete_diagram(diagram_id: int, current_user: schemas.User = Depends(get_current_user), db: Session = Depends(get_db)):
     db_diagram = db.query(models.Diagram).filter(models.Diagram.id == diagram_id, models.Diagram.owner_id == current_user.id).first()
     if not db_diagram:
         raise HTTPException(status_code=404, detail="Diagram not found")
     return crud.delete_diagram(db=db, db_diagram=db_diagram)
+
+app.include_router(router, prefix="/api")

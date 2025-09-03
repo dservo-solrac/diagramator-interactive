@@ -1,5 +1,5 @@
 # Stage 1: Build the React application
-FROM node:18
+FROM node:18 AS build
 
 WORKDIR /app
 
@@ -10,6 +10,14 @@ RUN npm install
 
 COPY . .
 
-# Expose the port and start the development server
+RUN npm run build
+
+# Stage 2: Serve the static files with Nginx
+FROM nginx:alpine
+
+COPY --from=build /app/build /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 3000
-CMD ["npm", "start"]
+
+CMD ["nginx", "-g", "daemon off;"]
