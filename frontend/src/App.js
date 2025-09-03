@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import Sidebar from './components/Sidebar';
@@ -18,6 +18,7 @@ const App = () => {
     const [xml, setXml] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [theme, setTheme] = useState('light');
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -35,7 +36,6 @@ const App = () => {
             setDiagrams(data);
         } catch (error) {
             console.error("Failed to fetch diagrams:", error);
-            // Optionally, handle logout if token is invalid
             if (error.message.includes("401")) {
                 handleLogout();
             }
@@ -133,18 +133,19 @@ const App = () => {
                 onExport={handleExport}
                 onMermaidOpen={() => setIsModalOpen(true)}
                 onLogout={handleLogout}
+                onNewDiagram={handleNewDiagram}
+                onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                theme={theme}
+                onToggleTheme={toggleTheme}
             />
             <div className="main-content">
                 <Sidebar 
                     diagrams={diagrams}
-                    onNew={handleNewDiagram}
                     onLoad={handleLoadDiagram}
                     onDelete={handleDeleteDiagram}
+                    isCollapsed={isSidebarCollapsed}
                 />
                 <div className="canvas-container">
-                    <button onClick={toggleTheme} className="theme-toggle-btn">
-                        Toggle Theme
-                    </button>
                     <MxGraphCanvas xml={xml} />
                 </div>
             </div>

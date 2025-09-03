@@ -19,12 +19,18 @@
     gap: 15px;
 }
 
+.top-bar-center {
+    flex-grow: 1;
+    justify-content: center;
+}
+
 .top-bar input[type="text"] {
     padding: 8px 12px;
     border-radius: 4px;
     border: 1px solid var(--border-color-light);
     background-color: var(--input-bg-light);
     color: var(--text-color-light);
+    min-width: 300px;
 }
 
 .theme-dark .top-bar input[type="text"] {
@@ -41,8 +47,21 @@
     color: white;
     cursor: pointer;
     transition: background-color 0.3s;
+    white-space: nowrap;
 }
 
 .top-bar button:hover {
     background-color: var(--primary-hover-color);
+}
+
+.top-bar .icon-btn {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: var(--text-color-light);
+}
+
+.theme-dark .top-bar .icon-btn {
+    color: var(--text-color-dark);
 }

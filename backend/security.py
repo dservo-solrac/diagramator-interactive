@@ -6,7 +6,7 @@ from passlib.context import CryptContext
 # Configuration
 SECRET_KEY = "a_very_secret_key_that_should_be_in_env_var"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440 # 1 day
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

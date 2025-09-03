@@ -1,15 +1,14 @@
 import React from 'react';
 import './Sidebar.css';
 
-const Sidebar = ({ diagrams, onNew, onLoad, onDelete }) => {
+const Sidebar = ({ diagrams, onLoad, onDelete, isCollapsed }) => {
     return (
-        <div className="sidebar">
-            <button onClick={onNew}>New Diagram</button>
+        <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
             <h3>My Diagrams</h3>
             <ul className="diagram-list">
                 {diagrams.map(d => (
                     <li key={d.id} className="diagram-item">
-                        <span onClick={() => onLoad(d)}>{d.name}</span>
+                        <span className="diagram-name" onClick={() => onLoad(d)}>{d.name}</span>
                         <button onClick={() => onDelete(d.id)} className="delete-btn">X</button>
                     </li>
                 ))}

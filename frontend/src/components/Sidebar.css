@@ -5,6 +5,13 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
+    transition: width 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: 0;
+    padding: 20px 0;
 }
 
 .theme-dark .sidebar {
@@ -14,17 +21,7 @@
 
 .sidebar h3 {
     margin-top: 0;
-}
-
-.sidebar button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: none;
-    border-radius: 4px;
-    background-color: var(--primary-color);
-    color: white;
-    cursor: pointer;
+    white-space: nowrap;
 }
 
 .sidebar .diagram-list {
@@ -41,6 +38,15 @@
     padding: 10px;
     cursor: pointer;
     border-radius: 4px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+}
+
+.diagram-name {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .sidebar .diagram-item:hover {
@@ -56,4 +62,6 @@
     border: none;
     color: #e53e3e;
     cursor: pointer;
+    padding: 0 5px;
+    margin-left: 10px;
 }
