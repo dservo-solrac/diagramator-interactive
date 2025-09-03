@@ -2,19 +2,19 @@
   --primary-color: #4a90e2;
   --primary-hover-color: #357abd;
   --background-color-light: #f4f5f7;
-  --background-color-dark: #2d3748;
+  --background-color-dark: #1a202c;
   --text-color-light: #2d3748;
   --text-color-dark: #e2e8f0;
   --border-color-light: #e2e8f0;
   --border-color-dark: #4a5568;
   --header-bg-light: #ffffff;
-  --header-bg-dark: #1a202c;
+  --header-bg-dark: #2d3748;
   --sidebar-bg-light: #ffffff;
-  --sidebar-bg-dark: #1a202c;
+  --sidebar-bg-dark: #2d3748;
   --modal-bg-light: #ffffff;
   --modal-bg-dark: #2d3748;
-  --input-bg-light: #ffffff;
-  --input-bg-dark: #1a202c;
+  --input-bg-light: #f9f9f9;
+  --input-bg-dark: #4a5568;
 }
 
 body {
@@ -23,65 +23,58 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
-.theme-light {
+.theme-light body {
   background-color: var(--background-color-light);
   color: var(--text-color-light);
 }
 
-.theme-dark {
+.theme-dark body {
   background-color: var(--background-color-dark);
   color: var(--text-color-dark);
 }
 
-/* Login Page */
-.login-page {
+/* Login & SignUp Page */
+.login-page, .signup-page {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: var(--background-color-light);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.theme-dark .login-page {
-  background-color: var(--background-color-dark);
-}
-
-.login-container {
+.login-container, .signup-container {
   padding: 40px;
-  background-color: var(--header-bg-light);
+  background-color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 350px;
+  width: 380px;
+  color: #333;
 }
 
-.theme-dark .login-container {
-  background-color: var(--header-bg-dark);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.login-container h2 {
+.login-container h2, .signup-container h2 {
   margin-bottom: 24px;
-  font-size: 24px;
+  font-size: 28px;
 }
 
-.login-container input {
-  width: 100%;
+.login-container input, .signup-container input {
+  width: calc(100% - 24px);
   padding: 12px;
   margin-bottom: 16px;
-  border: 1px solid var(--border-color-light);
+  border: 1px solid #ddd;
   border-radius: 4px;
   background-color: var(--input-bg-light);
-  color: var(--text-color-light);
+  color: #333;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.theme-dark .login-container input {
-  border-color: var(--border-color-dark);
-  background-color: var(--input-bg-dark);
-  color: var(--text-color-dark);
+.login-container input:focus, .signup-container input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
 }
 
-.login-container button {
+.login-container button, .signup-container button {
   width: 100%;
   padding: 12px;
   border: none;
@@ -93,51 +86,96 @@ body {
   transition: background-color 0.3s;
 }
 
-.login-container button:hover {
+.login-container button:hover, .signup-container button:hover {
   background-color: var(--primary-hover-color);
 }
 
-.login-container .error {
+.login-container .error, .signup-container .error {
   color: #e53e3e;
   margin-top: 16px;
+  font-size: 14px;
 }
 
+.switch-form-link {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font-size: 14px;
+}
+
+.switch-form-link:hover {
+    color: var(--primary-hover-color);
+}
 
 /* App Layout */
 .app-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background-color: var(--background-color-light);
+}
+
+.theme-dark .app-container {
+    background-color: var(--background-color-dark);
 }
 
 .main-content {
   display: flex;
   flex: 1;
-  height: calc(100vh - 60px); /* Adjust based on TopBar height */
+  height: calc(100vh - 60px);
 }
 
 .canvas-container {
   flex: 1;
-  padding: 10px;
   position: relative;
+  background-color: var(--background-color-light);
+}
+
+.theme-dark .canvas-container {
+    background-color: var(--background-color-dark);
 }
 
 .mxgraph-canvas {
     width: 100%;
     height: 100%;
-    background-color: #f0f0f0;
-    background-image: radial-gradient(#a0a0a0 1px, transparent 0);
+    background-image: radial-gradient(var(--border-color-light) 1px, transparent 0);
     background-size: 20px 20px;
 }
 
-/* Dark Theme */
 .theme-dark .mxgraph-canvas {
-    background-color: #333;
-    background-image: radial-gradient(#666 1px, transparent 0);
+    background-image: radial-gradient(var(--border-color-dark) 1px, transparent 0);
 }
 
-.theme-dark body, .theme-dark div, .theme-dark button {
-    background-color: #222;
-    color: #eee;
-    border-color: #555;
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.theme-toggle-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color-light);
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--header-bg-light);
+}
+
+.theme-dark .theme-toggle-btn {
+    background-color: var(--header-bg-dark);
+    border-color: var(--border-color-dark);
+    color: var(--text-color-dark);
 }

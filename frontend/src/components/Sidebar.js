@@ -1,21 +1,21 @@
 import React from 'react';
+import './Sidebar.css';
 
-const Sidebar = ({ diagrams, onNew, onLoad, onDelete }) => (
-    <div style={{ width: '250px', borderRight: '1px solid #ccc', padding: '10px' }}>
-        <h3>Diagrams</h3>
-        <button onClick={onNew}>New Diagram</button>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-            {diagrams.map(d => (
-                <li key={d.id} style={{ margin: '5px 0', display: 'flex', justifyContent: 'space-between' }}>
-                    <span>{d.name}</span>
-                    <div>
-                        <button onClick={() => onLoad(d)}>Load</button>
-                        <button onClick={() => onDelete(d.id)}>Delete</button>
-                    </div>
-                </li>
-            ))}
-        </ul>
-    </div>
-);
+const Sidebar = ({ diagrams, onNew, onLoad, onDelete }) => {
+    return (
+        <div className="sidebar">
+            <button onClick={onNew}>New Diagram</button>
+            <h3>My Diagrams</h3>
+            <ul className="diagram-list">
+                {diagrams.map(d => (
+                    <li key={d.id} className="diagram-item">
+                        <span onClick={() => onLoad(d)}>{d.name}</span>
+                        <button onClick={() => onDelete(d.id)} className="delete-btn">X</button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
 
 export default Sidebar;

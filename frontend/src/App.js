@@ -30,12 +30,21 @@ const App = () => {
     }, [theme]);
 
     const fetchDiagrams = async () => {
-        const data = await api.getDiagrams();
-        setDiagrams(data);
+        try {
+            const data = await api.getDiagrams();
+            setDiagrams(data);
+        } catch (error) {
+            console.error("Failed to fetch diagrams:", error);
+            // Optionally, handle logout if token is invalid
+            if (error.message.includes("401")) {
+                handleLogout();
+            }
+        }
     };
 
     const handleLoginSuccess = () => {
         setIsAuthenticated(true);
+        setShowSignUp(false);
     };
 
     const handleLogout = () => {
@@ -91,7 +100,6 @@ const App = () => {
     };
 
     const handleExport = (format) => {
-        // This is a placeholder. Export functionality requires access to the graph instance.
         alert(`Exporting as ${format} is not fully implemented yet.`);
     }; 
 
@@ -100,13 +108,20 @@ const App = () => {
     };
 
     if (!isAuthenticated) {
-        if (showSignUp) {
-            return <SignUpPage onSignUpSuccess={() => {
-                setShowSignUp(false);
-                alert('Sign up successful! Please log in.');
-            }} onSwitchToLogin={() => setShowSignUp(false)} />;
-        }
-        return <LoginPage onLoginSuccess={handleLoginSuccess} onSwitchToSignUp={() => setShowSignUp(true)} />;
+        return showSignUp ? (
+            <SignUpPage 
+                onSignUpSuccess={() => {
+                    setShowSignUp(false);
+                    alert('Sign up successful! Please log in.');
+                }} 
+                onSwitchToLogin={() => setShowSignUp(false)} 
+            />
+        ) : (
+            <LoginPage 
+                onLoginSuccess={handleLoginSuccess} 
+                onSwitchToSignUp={() => setShowSignUp(true)} 
+            />
+        );
     }
 
     return (
@@ -127,22 +142,25 @@ const App = () => {
                     onDelete={handleDeleteDiagram}
                 />
                 <div className="canvas-container">
-                    <button onClick={toggleTheme} style={{position: 'absolute', top: 20, left: 20, zIndex: 10}}>
+                    <button onClick={toggleTheme} className="theme-toggle-btn">
                         Toggle Theme
                     </button>
                     <MxGraphCanvas xml={xml} />
                 </div>
             </div>
             {isModalOpen && (
-                <MermaidModal 
-                    code={mermaidCode}
-                    setCode={setMermaidCode}
-                    onGenerate={handleGenerate}
-                    onCancel={() => setIsModalOpen(false)}
-                />
+                <div className="modal-overlay">
+                    <MermaidModal 
+                        code={mermaidCode}
+                        setCode={setMermaidCode}
+                        onGenerate={handleGenerate}
+                        onCancel={() => setIsModalOpen(false)}
+                    />
+                </div>
             )}
         </div>
     );
 };
 
 export default App;
+

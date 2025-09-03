@@ -1,0 +1,68 @@
+.mermaid-modal {
+    background-color: var(--modal-bg-light);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 80%;
+    max-width: 800px;
+}
+
+.theme-dark .mermaid-modal {
+    background-color: var(--modal-bg-dark);
+}
+
+.mermaid-modal h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.mermaid-modal textarea {
+    width: calc(100% - 20px);
+    height: 400px;
+    margin-bottom: 15px;
+    background-color: var(--input-bg-light);
+    color: var(--text-color-light);
+    border: 1px solid var(--border-color-light);
+    border-radius: 4px;
+    padding: 10px;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+.theme-dark .mermaid-modal textarea {
+    background-color: var(--input-bg-dark);
+    color: var(--text-color-dark);
+    border-color: var(--border-color-dark);
+}
+
+.mermaid-modal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.mermaid-modal .modal-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.mermaid-modal .modal-actions button:first-child {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.mermaid-modal .modal-actions button:first-child:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.mermaid-modal .modal-actions button:not(:first-child) {
+    background-color: #eee;
+    color: #333;
+}
+
+.theme-dark .mermaid-modal .modal-actions button:not(:first-child) {
+    background-color: var(--border-color-dark);
+    color: var(--text-color-dark);
+}

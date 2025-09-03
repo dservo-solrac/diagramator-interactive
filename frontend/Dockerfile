@@ -10,6 +10,7 @@ RUN npm install
 
 COPY . .
 
+ENV PUBLIC_URL=/
 RUN npm run build
 
 # Stage 2: Serve the static files with Nginx

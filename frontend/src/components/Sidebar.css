@@ -1,0 +1,59 @@
+.sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg-light);
+    border-right: 1px solid var(--border-color-light);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.theme-dark .sidebar {
+    background-color: var(--sidebar-bg-dark);
+    border-right: 1px solid var(--border-color-dark);
+}
+
+.sidebar h3 {
+    margin-top: 0;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--primary-color);
+    color: white;
+    cursor: pointer;
+}
+
+.sidebar .diagram-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.sidebar .diagram-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.sidebar .diagram-item:hover {
+    background-color: var(--background-color-light);
+}
+
+.theme-dark .sidebar .diagram-item:hover {
+    background-color: var(--background-color-dark);
+}
+
+.sidebar .delete-btn {
+    background: none;
+    border: none;
+    color: #e53e3e;
+    cursor: pointer;
+}

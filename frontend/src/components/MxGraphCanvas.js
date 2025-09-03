@@ -44,8 +44,7 @@ const MxGraphCanvas = ({ xml }) => {
 
         const xmlDoc = mxUtils.parseXml(xml);
         const codec = new mxCodec(xmlDoc);
-        const model = codec.decode(xmlDoc.documentElement.querySelector('diagram > mxGraphModel'));
-        graph.setModel(model);
+        codec.decode(xmlDoc.documentElement, graph.getModel());
 
         return () => {
             graph.destroy();

@@ -13,7 +13,7 @@ const LoginPage = ({ onLoginSuccess, onSwitchToSignUp }) => {
             await login(email, password);
             onLoginSuccess();
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'An unknown error occurred.');
         }
     };
 
@@ -21,7 +21,7 @@ const LoginPage = ({ onLoginSuccess, onSwitchToSignUp }) => {
         <div className="login-page">
             <div className="login-container">
                 <form onSubmit={handleSubmit}>
-                    <h2>Login</h2>
+                    <h2>Welcome Back!</h2>
                     <input
                         type="email"
                         placeholder="Email"
@@ -38,8 +38,13 @@ const LoginPage = ({ onLoginSuccess, onSwitchToSignUp }) => {
                     />
                     <button type="submit">Login</button>
                     {error && <p className="error">{error}</p>}
+                    <p style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
+                        Don't have an account?{' '}
+                        <button type="button" onClick={onSwitchToSignUp} className="switch-form-link">
+                            Sign Up
+                        </button>
+                    </p>
                 </form>
-            <p>Don't have an account? <button onClick={onSwitchToSignUp}>Sign Up</button></p>
             </div>
         </div>
     );
